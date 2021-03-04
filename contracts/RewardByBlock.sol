@@ -6,7 +6,19 @@ import "../interfaces/IRewardByBlock.sol";
 
 
 contract RewardByBlock is IRewardByBlock {
-    address systemAddress;
+    address public systemAddress;
+	//using SafeMath for uint256;
+
+	address[] public bridgeAllowed;
+	address[] public extraReceivers;
+    uint256 public mintedTotally;
+    uint256 public bridgeAmount;
+	mapping(address => uint256) public extraReceiverAmount;
+	mapping(address => uint256) public mintedForAccount;
+	mapping(address => mapping(uint256 => uint256)) public mintedForAccountInBlock;
+	mapping(uint256 => uint256) public mintedInBlock;
+	mapping(address => uint256) public mintedTotallyByBridge;
+   
 
 	modifier onlySystem {
 		require(msg.sender == systemAddress);
