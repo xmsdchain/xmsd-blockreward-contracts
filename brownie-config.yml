@@ -1,0 +1,38 @@
+# use Ganache's forked mainnet mode as the default network
+# NOTE: You don't *have* to do this, but it is often helpful for testing
+networks:
+  default: development
+  development:
+    gas_limit: max
+    gas_buffer: 1
+    gas_price: 0
+    reverting_tx_gas_limit: max
+    default_contract_owner: true
+    cmd_settings:
+      port: 8545
+      gas_limit: 6721975
+      accounts: 500
+      
+# automatically fetch contract sources from Etherscan
+autofetch_sources: True
+
+# require OpenZepplin Contracts
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@3.3.0
+  - OpenZeppelin/openzeppelin-contracts-upgradeable@3.3.0
+# path remapping to support imports from GitHub/NPM
+compiler:
+  solc:
+    version: 0.8.2
+    remappings:
+      - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@3.3.0"
+      - "@ozUpgradesV3=OpenZeppelin/openzeppelin-contracts-upgradeable@3.3.0"
+    optimizer:
+      runs: 99999
+
+  vyper:
+    version: 0.2.8
+
+reports:
+  exclude_contracts:
+    - SafeMath
