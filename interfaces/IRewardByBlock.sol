@@ -1,6 +1,6 @@
 //SPDX-License-Identifier: AGPL 3
 
-pragma solidity ^0.8.2;
+pragma solidity ^0.7.6;
 
 interface IRewardByBlock {
     // Produce rewards for the given benefactors, with corresponding reward codes.

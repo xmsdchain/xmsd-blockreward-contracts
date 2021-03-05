@@ -1,11 +1,17 @@
 //SPDX-License-Identifier: AGPL 3
 
-pragma solidity ^0.8.2;
+pragma solidity ^0.7.6;
 
 import "../interfaces/IRewardByBlock.sol";
+import "@ozUpgradesV3/contracts/access/OwnableUpgradeable.sol";
+import "@ozUpgradesV3/contracts/utils/AddressUpgradeable.sol";
+import "@ozUpgradesV3/contracts/math/SafeMathUpgradeable.sol";
 
+contract RewardByBlock is IRewardByBlock,  OwnableUpgradeable {
 
-contract RewardByBlock is IRewardByBlock {
+    using AddressUpgradeable for address;
+    using SafeMathUpgradeable for uint256;
+
     address public systemAddress;
 	address[] public bridgesAllowed;
 	address[] public extraReceivers;
@@ -32,11 +38,11 @@ contract RewardByBlock is IRewardByBlock {
 		_;
 	}
 
-	constructor(address _systemAddress)
-	{
-		/* systemAddress = 0xffffFFFfFFffffffffffffffFfFFFfffFFFfFFfE; */
-		systemAddress = _systemAddress;
-	}
+
+    function initialize(address _systemAddress) public initializer {
+        __Ownable_init();
+        systemAddress = _systemAddress;
+    }
 
 	function addExtraReceiver(uint256 _amount, address _receiver)
         external
@@ -48,8 +54,8 @@ contract RewardByBlock is IRewardByBlock {
         if (oldAmount == 0) {
             _addExtraReceiver(_receiver);
         }
-        _setExtraReceiverAmount(oldAmount+_amount, _receiver);
-        _setBridgeAmount(bridgeAmount[msg.sender]+_amount, msg.sender);
+        _setExtraReceiverAmount(oldAmount.add(_amount), _receiver);
+        _setBridgeAmount(bridgeAmount[msg.sender].add(_amount), msg.sender);
         emit AddedReceiver(_amount, _receiver, msg.sender);
     }
 
@@ -60,7 +66,7 @@ contract RewardByBlock is IRewardByBlock {
     {
         require(benefactors.length == kind.length);
         uint256 extraLength = extraReceivers.length;
-        address[] memory receivers = new address[](extraLength+benefactors.length);
+        address[] memory receivers = new address[](extraLength.add(benefactors.length));
         uint256[] memory rewards = new uint256[](receivers.length);
 
         uint256 i;
@@ -100,7 +106,7 @@ contract RewardByBlock is IRewardByBlock {
         return (receivers, rewards);
     }
 
-    function setBridgeAllowed(address[] calldata _bridges) external {
+    function setBridgeAllowed(address[] calldata _bridges) external onlyOwner {
         bridgesAllowed = _bridges;
     }
 
@@ -142,7 +148,7 @@ contract RewardByBlock is IRewardByBlock {
 
         mintedInBlock[block.number] = _amount;
 
-        mintedTotally = mintedTotally+_amount;
+        mintedTotally = mintedTotally.add(_amount);
    
     } 
 }
