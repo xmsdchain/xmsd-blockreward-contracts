@@ -7,8 +7,6 @@ import "../interfaces/IRewardByBlock.sol";
 
 contract RewardByBlock is IRewardByBlock {
     address public systemAddress;
-	//using SafeMath for uint256;
-
 	address[] public bridgeAllowed;
 	address[] public extraReceivers;
     uint256 public mintedTotally;
@@ -122,102 +120,30 @@ contract RewardByBlock is IRewardByBlock {
     
         return (receivers, rewards);
     }
+   
 
-    function bridgesAllowed() public pure returns(address[bridgesAllowedLength]) {
-        // These values must be changed before deploy
-        return([
-            address(0x0000000000000000000000000000000000000000),
-            address(0x0000000000000000000000000000000000000000),
-            address(0x0000000000000000000000000000000000000000)
-        ]);
-    }
+    */
 
-    function bridgeAmount(address _bridge) public view returns(uint256) {
-        return uintStorage[
-            keccak256(abi.encode(BRIDGE_AMOUNT, _bridge))
-        ];
-    }
 
-    function extraReceiverByIndex(uint256 _index) public view returns(address) {
-        return addressArrayStorage[EXTRA_RECEIVERS][_index];
-    }
-
-    function extraReceiverAmount(address _receiver) public view returns(uint256) {
-        return uintStorage[
-            keccak256(abi.encode(EXTRA_RECEIVER_AMOUNT, _receiver))
-        ];
-    }
-
-    function extraReceiversLength() public view returns(uint256) {
-        return addressArrayStorage[EXTRA_RECEIVERS].length;
-    }
-
-    function mintedForAccount(address _account)
-        public
-        view
-        returns(uint256)
-    {
-        return uintStorage[
-            keccak256(abi.encode(MINTED_FOR_ACCOUNT, _account))
-        ];
-    }
-
-    function mintedForAccountInBlock(address _account, uint256 _blockNumber)
-        public
-        view
-        returns(uint256)
-    {
-        return uintStorage[
-            keccak256(abi.encode(MINTED_FOR_ACCOUNT_IN_BLOCK, _account, _blockNumber))
-        ];
-    }
-
-    function mintedInBlock(uint256 _blockNumber) public view returns(uint256) {
-        return uintStorage[
-            keccak256(abi.encode(MINTED_IN_BLOCK, _blockNumber))
-        ];
-    }
-
-    function mintedTotally() public view returns(uint256) {
-        return uintStorage[MINTED_TOTALLY];
-    }
-
-    function mintedTotallyByBridge(address _bridge) public view returns(uint256) {
-        return uintStorage[
-            keccak256(abi.encode(MINTED_TOTALLY_BY_BRIDGE, _bridge))
-        ];
-    }
-
-    function proxyStorage() public view returns(address) {
-        return addressStorage[PROXY_STORAGE];
+    function setBridgeAllowed(address[] calldata _bridges) external {
+        bridgeAllowed = _bridges;
     }
 
     function _addExtraReceiver(address _receiver) private {
-        addressArrayStorage[EXTRA_RECEIVERS].push(_receiver);
+        extraReceivers.push(_receiver);
     }
 
     function _addMintedTotallyByBridge(uint256 _amount, address _bridge) private {
-        bytes32 hash = keccak256(abi.encode(MINTED_TOTALLY_BY_BRIDGE, _bridge));
-        uintStorage[hash] = uintStorage[hash].add(_amount);
+        mintedTotallyByBridge = mintedTotallyByBridge+_amount;
     }
 
     function _clearExtraReceivers() private {
-        addressArrayStorage[EXTRA_RECEIVERS].length = 0;
+        extraReceivers.length = 0;
     }
 
-    function _getPayoutByMining(address _miningKey)
-        private
-        view
-        returns (address)
-    {
-        IKeysManager keysManager = IKeysManager(
-            IProxyStorage(proxyStorage()).getKeysManager()
-        );
-        address payoutKey = keysManager.getPayoutByMining(_miningKey);
-        return (payoutKey != address(0)) ? payoutKey : _miningKey;
-    }
 
-    function _isBridgeContract(address _addr) private pure returns(bool) {
+
+    function _isBridgeContract(address _addr) private internal returns(bool) {
         address[bridgesAllowedLength] memory bridges = bridgesAllowed();
         
         for (uint256 i = 0; i < bridges.length; i++) {
@@ -229,30 +155,14 @@ contract RewardByBlock is IRewardByBlock {
         return false;
     }
 
-    function _isMiningActive(address _miningKey)
-        private
-        view
-        returns (bool)
-    {
-        IKeysManager keysManager = IKeysManager(
-            IProxyStorage(proxyStorage()).getKeysManager()
-        );
-        return keysManager.isMiningActive(_miningKey);
-    }
-
     function _setBridgeAmount(uint256 _amount, address _bridge) private {
-        uintStorage[
-            keccak256(abi.encode(BRIDGE_AMOUNT, _bridge))
-        ] = _amount;
+        bridgeAmount[_bridge] = _amount;
     }
 
     function _setExtraReceiverAmount(uint256 _amount, address _receiver) private {
-        uintStorage[
-            keccak256(abi.encode(EXTRA_RECEIVER_AMOUNT, _receiver))
-        ] = _amount;
+        extraReceiverAmount[_receiver] = _amount;
     }
 
-    */
 
     function _setMinted(uint256 _amount, address _account) private {
         bytes32 hash;
