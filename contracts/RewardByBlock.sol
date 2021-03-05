@@ -252,21 +252,19 @@ contract RewardByBlock is IRewardByBlock {
         ] = _amount;
     }
 
+    */
+
     function _setMinted(uint256 _amount, address _account) private {
         bytes32 hash;
 
-        hash = keccak256(abi.encode(MINTED_FOR_ACCOUNT_IN_BLOCK, _account, block.number));
-        uintStorage[hash] = _amount;
+        mintedForAccountInBlock[_account][block.number] = _amount;
+        
+        mintedForAccount[_account] = _amount;
 
-        hash = keccak256(abi.encode(MINTED_FOR_ACCOUNT, _account));
-        uintStorage[hash] = uintStorage[hash].add(_amount);
+        mintedInBlock[block.number] = _amount;
 
-        hash = keccak256(abi.encode(MINTED_IN_BLOCK, block.number));
-        uintStorage[hash] = uintStorage[hash].add(_amount);
-
-        hash = MINTED_TOTALLY;
-        uintStorage[hash] = uintStorage[hash].add(_amount);
-    } */
-
+        mintedTotally = mintedTotally+_amount;
+   
+    } 
 
 }
