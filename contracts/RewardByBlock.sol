@@ -7,10 +7,11 @@ import "../interfaces/IRewardByBlock.sol";
 
 contract RewardByBlock is IRewardByBlock {
     address public systemAddress;
-	address[] public bridgeAllowed;
+	address[] public bridgesAllowed;
 	address[] public extraReceivers;
     uint256 public mintedTotally;
     uint256 public bridgeAmount;
+
 	mapping(address => uint256) public extraReceiverAmount;
 	mapping(address => uint256) public mintedForAccount;
 	mapping(address => mapping(uint256 => uint256)) public mintedForAccountInBlock;
@@ -25,7 +26,6 @@ contract RewardByBlock is IRewardByBlock {
         require(_isBridgeContract(msg.sender));
         _;
     }
-   
 
 	modifier onlySystem {
 		require(msg.sender == systemAddress);
@@ -54,9 +54,6 @@ contract RewardByBlock is IRewardByBlock {
 
 		return (benefactors, rewards);
 	}
-
-
-    //bad implementation
 	
 	function addExtraReceiver(uint256 _amount, address _receiver)
         external
@@ -79,34 +76,26 @@ contract RewardByBlock is IRewardByBlock {
         returns (address[], uint256[])
     {
         require(benefactors.length == kind.length);
-        require(benefactors.length == 1);
-        require(kind[0] == 0);
+		
 
-        address miningKey = benefactors[0];
-
-        if (miningKey == address(0)) {
-            // Return empty arrays
-            return (new address[](0), new uint256[](0));
-        }
-
+        
         uint256 extraLength = extraReceiversLength();
 
-        address[] memory receivers = new address[](extraLength.add(2));
+        address[] memory receivers = new address[](extraLength.add(benefactors.length));
         uint256[] memory rewards = new uint256[](receivers.length);
 
-        receivers[0] = _getPayoutByMining(miningKey);
-        rewards[0] = blockRewardAmount;
-        receivers[1] = emissionFunds;
-        rewards[1] = emissionFundsAmount;
+        for (uint i = 0; i < benefactors.length; i++) {
+			receivers[i] = benefactors[i];
+            rewards[i] = 0;
+		}
 
-        uint256 i;
-        
-        for (i = 0; i < extraLength; i++) {
+        uint256 i;        
+        for (i = benefactors.length; i < receivers.length; i++) {
             address extraAddress = extraReceiverByIndex(i);
             uint256 extraAmount = extraReceiverAmount(extraAddress);
             _setExtraReceiverAmount(0, extraAddress);
-            receivers[i.add(2)] = extraAddress;
-            rewards[i.add(2)] = extraAmount;
+            receivers[i] = extraAddress;
+            rewards[i] = extraAmount;
         }
 
         for (i = 0; i < receivers.length; i++) {
@@ -114,7 +103,7 @@ contract RewardByBlock is IRewardByBlock {
         }
 
         for (i = 0; i < bridgesAllowedLength; i++) {
-            address bridgeAddress = bridgesAllowed()[i];
+            address bridgeAddress = bridgesAllowed[i];
             uint256 bridgeAmountForBlock = bridgeAmount(bridgeAddress);
 
             if (bridgeAmountForBlock > 0) {
@@ -129,12 +118,12 @@ contract RewardByBlock is IRewardByBlock {
     
         return (receivers, rewards);
     }
-    */
-
 
     function setBridgeAllowed(address[] calldata _bridges) external {
         bridgeAllowed = _bridges;
     }
+
+
 
     function _addExtraReceiver(address _receiver) private {
         extraReceivers.push(_receiver);
@@ -183,5 +172,9 @@ contract RewardByBlock is IRewardByBlock {
         mintedTotally = mintedTotally+_amount;
    
     } 
+
+    function bridgesAllowedLength() external view returns(uint256) {
+        return bridgesAllowed.length;
+    }
 
 }
