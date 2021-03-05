@@ -63,12 +63,14 @@ contract RewardByBlock is IRewardByBlock {
         address[] memory receivers = new address[](extraLength+benefactors.length);
         uint256[] memory rewards = new uint256[](receivers.length);
 
-        for (uint i = 0; i < benefactors.length; i++) {
+        uint256 i;
+
+        for (i = 0; i < benefactors.length; i++) {
 			receivers[i] = benefactors[i];
             rewards[i] = 0;
 		}
 
-        uint256 i;        
+               
         for (i = benefactors.length; i < receivers.length; i++) {
             address extraAddress = extraReceivers[i];
             uint256 extraAmount = extraReceiverAmount[extraAddress];
