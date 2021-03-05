@@ -16,6 +16,15 @@ contract RewardByBlock is IRewardByBlock {
 	mapping(address => mapping(uint256 => uint256)) public mintedForAccountInBlock;
 	mapping(uint256 => uint256) public mintedInBlock;
 	mapping(address => uint256) public mintedTotallyByBridge;
+
+
+    event AddedReceiver(uint256 amount, address indexed receiver, address indexed bridge);
+    event Rewarded(address[] receivers, uint256[] rewards);
+
+    modifier onlyBridgeContract {
+        require(_isBridgeContract(msg.sender));
+        _;
+    }
    
 
 	modifier onlySystem {
@@ -49,7 +58,7 @@ contract RewardByBlock is IRewardByBlock {
 
     //bad implementation
 	
-	/*function addExtraReceiver(uint256 _amount, address _receiver)
+	function addExtraReceiver(uint256 _amount, address _receiver)
         external
         onlyBridgeContract
     {
@@ -120,8 +129,6 @@ contract RewardByBlock is IRewardByBlock {
     
         return (receivers, rewards);
     }
-   
-
     */
 
 
