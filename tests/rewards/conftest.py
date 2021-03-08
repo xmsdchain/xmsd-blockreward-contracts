@@ -9,7 +9,6 @@ from utils.deploy_helpers import deploy_proxy, deploy_admin
 def deployer():
     yield accounts[0]
 
-
 @pytest.fixture(scope="module")
 def bridge():
     yield accounts[1]
@@ -30,7 +29,7 @@ def block_reward(deployer, proxy_admin, system, RewardByBlock):
     assert blockRewardProxy.admin.call({"from":proxy_admin.address}) == proxy_admin.address
     assert blockRewardProxy.implementation.call({"from":proxy_admin.address}) == blockRewardImpl.address
 
-    assert blockRewardImplFromProxy.systemAddress == system
+    assert blockRewardImplFromProxy.systemAddress() == system
     yield blockRewardImplFromProxy
 
     
