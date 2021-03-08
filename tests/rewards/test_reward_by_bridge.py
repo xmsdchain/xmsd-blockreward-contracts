@@ -2,13 +2,13 @@ import pytest
 import brownie
 
 
-def test_register_bridge(deployer, block_reward, bridge):
-    block_reward.setBridgeAllowed([bridge], {"from":deployer})
+def test_register_bridge(deployer, block_reward, bridge1, bridge2):
+    block_reward.setBridgeAllowed([bridge1, bridge2], {"from":deployer})
 
-    assert block_reward.bridgesAllowed(0) == bridge
+    assert block_reward.bridgesAllowed(0) == bridge1
 
 
-def test_register_bridge_failed(deployer, block_reward, bridge):
+def test_register_bridge_failed(deployer, block_reward, bridge1, bridge2, bridge3):
 
     with brownie.reverts():
-         block_reward.setBridgeAllowed([bridge], {"from":bridge})
+         block_reward.setBridgeAllowed([bridge1, bridge2], {"from":bridge3})

@@ -10,12 +10,20 @@ def deployer():
     yield accounts[0]
 
 @pytest.fixture(scope="module")
-def bridge():
+def system():
     yield accounts[1]
 
 @pytest.fixture(scope="module")
-def system():
+def bridge1():
     yield accounts[2]
+
+@pytest.fixture(scope="module")
+def bridge2():
+    yield accounts[3]
+
+@pytest.fixture(scope="module")
+def bridge3():
+    yield accounts[4]
 
 @pytest.fixture(scope="module")
 def proxy_admin(deployer):
