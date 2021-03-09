@@ -78,7 +78,7 @@ contract RewardByBlock is IRewardByBlock,  OwnableUpgradeable {
 
                
         for (i = benefactors.length; i < receivers.length; i++) {
-            address extraAddress = extraReceivers[i];
+            address extraAddress = extraReceivers[i-benefactors.length];
             uint256 extraAmount = extraReceiverAmount[extraAddress];
             _setExtraReceiverAmount(0, extraAddress);
             receivers[i] = extraAddress;
@@ -100,10 +100,14 @@ contract RewardByBlock is IRewardByBlock,  OwnableUpgradeable {
         }
 
         _clearExtraReceivers();
-
+        
         emit Rewarded(receivers, rewards);
-    
+
         return (receivers, rewards);
+    }
+
+    function extraReceiverLength() external view returns(uint256 length) {
+        length = extraReceivers.length;
     }
 
     function setBridgeAllowed(address[] calldata _bridges) external onlyOwner {
@@ -146,7 +150,7 @@ contract RewardByBlock is IRewardByBlock,  OwnableUpgradeable {
         
         mintedForAccount[_account] = _amount;
 
-        mintedInBlock[block.number] = _amount;
+        mintedInBlock[block.number] = mintedInBlock[block.number].add(_amount);
 
         mintedTotally = mintedTotally.add(_amount);
    

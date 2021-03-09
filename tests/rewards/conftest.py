@@ -5,6 +5,7 @@ import sys
 from utils.deploy_helpers import deploy_proxy, deploy_admin
 
 
+
 @pytest.fixture(scope="module")
 def deployer():
     yield accounts[0]
@@ -24,6 +25,20 @@ def bridge2():
 @pytest.fixture(scope="module")
 def bridge3():
     yield accounts[4]
+
+@pytest.fixture(scope="module")
+def regular_user():
+    yield accounts[5]
+
+
+@pytest.fixture(scope="module")
+def regular_user1():
+    yield accounts[6]
+
+
+@pytest.fixture(scope="module")
+def regular_user2():
+    yield accounts[7]
 
 @pytest.fixture(scope="module")
 def proxy_admin(deployer):
