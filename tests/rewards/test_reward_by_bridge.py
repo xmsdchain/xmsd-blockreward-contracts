@@ -38,6 +38,13 @@ def test_add_extra_receiver(chain, deployer, block_reward, bridge1, regular_user
     assert block_reward.extraReceivers(0) == regular_user
     assert block_reward.extraReceiverLength() == 1
 
+    calls = block_reward.reward.call([bridge1], [0], {"from":system})
+    receivers = calls[0]
+    rewards = calls[1]
+    
+    assert receivers[1] == regular_user
+    assert rewards[1] == BRIDGE_TOKENS
+
     tx = block_reward.reward([bridge1], [0], {"from":system})
 
     assert block_reward.mintedTotally() == BRIDGE_TOKENS
@@ -62,6 +69,18 @@ def test_add_extra_receivers(chain, deployer, block_reward, bridge1, bridge2, re
     assert block_reward.extraReceivers(1) == regular_user2
 
     assert block_reward.extraReceiverLength() == 2
+
+
+    calls = block_reward.reward.call([bridge1, bridge2], [0, 1], {"from":system})
+    
+    receivers = calls[0]
+    rewards = calls[1]
+
+    assert receivers[2] == regular_user1
+    assert receivers[3] == regular_user2
+
+    assert rewards[2] == BRIDGE_TOKENS
+    assert rewards[3] == BRIDGE_TOKENS
 
     tx = block_reward.reward([bridge1, bridge2], [0, 1], {"from":system})
 
